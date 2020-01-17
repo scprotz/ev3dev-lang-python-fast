@@ -1494,7 +1494,7 @@ class Led(Device):
             raise Exception("Invalid Color Type for Led. (" + color_type + ") attempted but is not in " + str(Led.COLOR_TYPES)+ ".")
             
         self.attribute = color_type + "_"+ location
-        self._directory = self._DIRECTORY_BASE + Led.LEDS[self.attribute]
+        self._directory = self._DIRECTORY_BASE + Led.LEDS[self.attribute] +"/"
 
 
     @property
