@@ -89,7 +89,7 @@ class Sensor(Device):
 
             else:
                 # get the driver name from this sensor
-                sensor_driver_name = self.readStr('driver_name').strip()
+                sensor_driver_name = self.readStr('driver_name')
 
                 # if it is the correct one, break
                 if sensor_driver_name in self._DRIVER_NAME:
@@ -138,7 +138,7 @@ class Sensor(Device):
 
     @property
     def commands(self):
-        return self.read('commands')
+        return self.readStr('commands')
     
     @property
     def decimals(self):
@@ -149,7 +149,7 @@ class Sensor(Device):
 
     @property
     def mode(self):
-        return self._currentMode.strip()
+        return self._currentMode
 
     @mode.setter
     def mode(self, mode):
@@ -617,7 +617,7 @@ class Motor(Device):
 
             else:
                 # get the driver name from this motor
-                motor_driver_name = self.readStr('driver_name').strip()
+                motor_driver_name = self.readStr('driver_name')
 
                 # if it is the correct one, break
                 if self._DRIVER_NAME == motor_driver_name:
