@@ -26,7 +26,7 @@ class Device:
         try:
             value = ""
             f = open(self._directory + attribute, 'r')
-            value = f.read()
+            value = f.read().strip()
             logger.debug("Read value " + str(value) +  str(type(value)))
             f.close()
             return value
@@ -92,7 +92,7 @@ class Sensor(Device):
                 sensor_driver_name = self.readStr('driver_name').strip()
 
                 # if it is the correct one, break
-                if self._DRIVER_NAME == sensor_driver_name:
+                if sensor_driver_name in self._DRIVER_NAME:
                     break
 
                 # not this one, so set path back to empty
@@ -332,7 +332,7 @@ class ColorSensor(Sensor):
         return self.raw[2]
 
 class UltrasonicSensor(Sensor):
-    _DRIVER_NAME = 'lego-ev3-us'
+    _DRIVER_NAME = ['lego-ev3-us', 'lego-nxt-us']
 
     MODE_US_DIST_CM = 'US-DIST-CM'
     MODE_US_DIST_IN = 'US-DIST-IN'
@@ -344,14 +344,17 @@ class UltrasonicSensor(Sensor):
     def distance_centimeters(self):
         if (self._currentMode != self.MODE_US_DIST_CM):
             self.mode = self.MODE_US_DIST_CM
-        return self.readInt('value0')/10
+        value = self.readInt('value0')
+        if self.driver_name == "lego-nxt-us":
+            return value
+        return value/10
 
     @property
     def distance_inches(self):
         if (self._currentMode != self.MODE_US_DIST_IN):
             self.mode = self.MODE_US_DIST_IN
-        return self.readInt('value0') / 10
-
+        return self.readInt('value0')/10
+        
     @property
     def other_sensor_present(self):
         if (self._currentMode != self.MODE_US_LISTEN):
@@ -630,7 +633,6 @@ class Motor(Device):
                 raise Exception("Could not find a motor of type " + self._DRIVER_NAME)
         
         self._load_attributes()
-        print(self._directory + "state")
         self._state_fd = os.open(self._directory + "state", os.O_RDONLY)
 
         self.max_rps = float(self.max_speed / self.count_per_rot)
